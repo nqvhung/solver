@@ -95,10 +95,53 @@ int my_main3(){
     return 0;
 }
 
+int my_main4(){
+    int n = 10000;
+    int d = 2;
+    vector<DPoint>* points = new vector<DPoint>;
+    for (int i = 0; i < n; i++) {
+        points->push_back(DPoint::randomPoint_int(d, 0, 10));
+    }
+
+//    MonoFunction* f = new Sum;
+    MonoFunction *f = new Max;
+    double c = 5.5;
+
+    CBPAlgo* bf = new BruteForce(points, f);
+//    CBPAlgo* algo = new Algo1(points, f);
+    CBPAlgo* algo = new Algo2(points, f);
+    algo->run(c);
+    for (auto i : *algo->getLabels()){
+        std::cout << i.first << "\t" << i.second << endl;
+    }
+
+    bf->run(c);
+    bool correct = true;
+    for (auto i : *algo->getLabels()){
+        auto j = bf->getLabels()->find(i.first);
+        if (j == bf->getLabels()->end()) {
+            correct = false;
+            break;
+        } else if (i.second != j->second) {
+            correct = false;
+            break;
+        }
+    }
+
+    std::cout << std::boolalpha << "Correctness: " << correct << endl;
+
+    delete f;
+    delete algo;
+    delete bf;
+
+    return 0;
+}
+
 
 int main() {
 //    std::cout << "Hello, World!" << std::endl;
 //    return my_main1();
 //    return my_main2();
-    return my_main3();
+//    return my_main3();
+    return my_main4();
 }
