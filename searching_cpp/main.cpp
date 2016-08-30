@@ -7,6 +7,7 @@
 #include "BruteForce.h"
 #include "Algo1.h"
 #include "Algo2.h"
+#include "FunctionCounter.h"
 
 using namespace std;
 
@@ -100,16 +101,21 @@ int my_main4(){
     int d = 2;
     vector<DPoint>* points = new vector<DPoint>;
     for (int i = 0; i < n; i++) {
-        points->push_back(DPoint::randomPoint_int(d, 0, 10));
+        points->push_back(DPoint::randomPoint_int(d, 0, 10000000));
     }
 
 //    MonoFunction* f = new Sum;
     MonoFunction *f = new Max;
     double c = 5.5;
 
-    CBPAlgo* bf = new BruteForce(points, f);
+    FunctionCounter* counter1 = new FunctionCounter(f);
+    CBPAlgo* bf = new BruteForce(points, counter1);
+
+    FunctionCounter* counter2 = new FunctionCounter(f);
 //    CBPAlgo* algo = new Algo1(points, f);
-    CBPAlgo* algo = new Algo2(points, f);
+//    CBPAlgo* algo = new Algo2(points, f);
+    CBPAlgo* algo = new Algo2(points, counter2);
+
     algo->run(c);
     for (auto i : *algo->getLabels()){
         std::cout << i.first << "\t" << i.second << endl;
@@ -129,8 +135,12 @@ int my_main4(){
     }
 
     std::cout << std::boolalpha << "Correctness: " << correct << endl;
+    std::cout << "Baseline: " << counter1->getCount() << "\t" << counter1->getCacheSize() << endl;
+    std::cout << "Algo: " << counter2->getCount() << "\t" << counter2->getCacheSize() << endl;
 
     delete f;
+    delete counter1;
+    delete counter2;
     delete algo;
     delete bf;
 
